@@ -1,64 +1,58 @@
-import toBuffer from 'blob-to-buffer';
-import Resizer from '../src/index.js';
-import image from './assets/cat.jpeg';
+import Resizer from '../src';
+import image from './assets/exif-orientation-examples/Landscape_2.jpg';
 
-window.__karma__.setupContext(window);
+const convertBinaryStringToUint8Array = bStr => {
+  const len = bStr.length;
+  const u8Array = new Uint8Array(len);
 
-let imageOriginal = new Image();
-let imageResized = new Image();
-
-if (document) {
-  imageOriginal.style = 'width: 300px';
-  imageResized.style = 'width: 300px';
-
-  document.querySelector('body').appendChild(imageOriginal);
-  document.querySelector('body').appendChild(imageResized);
-}
-
-function blobToUint8Array(b) {
-  var uri = URL.createObjectURL(b),
-    xhr = new XMLHttpRequest(),
-    i,
-    ui8;
-
-  xhr.open('GET', uri, false);
-  xhr.send();
-
-  URL.revokeObjectURL(uri);
-
-  ui8 = new Uint8Array(xhr.response.length);
-
-  for (i = 0; i < xhr.response.length; ++i) {
-    ui8[i] = xhr.response.charCodeAt(i);
+  // eslint-disable-next-line
+  for (var i = 0; i < len; i++) {
+    u8Array[i] = bStr.charCodeAt(i);
   }
+  return u8Array;
+};
 
-  return ui8;
-}
+const [original, resized] = [new Image(), new Image()];
 
 describe('test compression', () => {
   it('should be compress', done => {
-    fetch(image)
-      .then(res => res.blob())
-      .then(blob => blobToUint8Array(blob))
-      .then(binary => {
-        // toBuffer(blob, (err, buff) => {
-        //   Resizer(buff, 10, 10).then(x => {});
-        // });
-        // console.log('blob', binary);
-        if (document) {
-          // imageOriginal.src = URL.createObjectURL(blob);
-        }
-        return Resizer(binary, 10, 10);
-      })
-      .then(resized => {
-        //console.log('resized', resized);
+    let originalBlob;
+    let resizedBlob;
 
-        if (document) {
-          // imageResized.src = URL.createObjectURL(resized);
-        }
+    document.querySelector('body').appendChild(resized);
+
+    Promise.resolve()
+      .then(() => {
+        return convertBinaryStringToUint8Array(
+          atob(image.replace('data:', '').split(',')[1]),
+        );
       })
-      //  .then(() => new Promise(resolve => setTimeout(() => resolve(), 2000)))
+      .then(uintArray => {
+        originalBlob = new Blob([uintArray]);
+        return Resizer(uintArray, 100);
+      })
+      .then(uintArray => {
+        const blob = new Blob([uintArray]);
+        resizedBlob = blob;
+      })
+
+      .then(() => {
+        resized.src = URL.createObjectURL(resizedBlob);
+        original.src = URL.createObjectURL(originalBlob);
+
+        // eslint-disable-next-line
+        console.log('resizedBlob.size', resizedBlob.size, originalBlob.size);
+        expect(resizedBlob.size).toBeLessThan(originalBlob.size);
+      })
+      // .then(() => new Promise(resolve => setTimeout(() => resolve(), 2000)))
       .then(() => done())
       .catch(err => console.error('coucou', err));
+  });
+
+  it('should be sized', done => {
+    setTimeout(() => {
+      expect(resized.width).toBe(100);
+      done();
+    }, 100);
   });
 });

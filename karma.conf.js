@@ -29,7 +29,7 @@ module.exports = function(config) {
     basePath: '',
     frameworks: ['jasmine'],
     autoWatch: true,
-    browsers: ['Chrome', 'Firefox'],
+    browsers: ['Chrome', 'Firefox', 'Safari'],
     files: [
       { pattern: 'tests/*.js', watched: true, served: true, included: true },
       {
