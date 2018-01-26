@@ -1,0 +1,22 @@
+{
+  "presets": [
+    [
+      "env",
+      {
+        "targets": {
+          "browsers": ["last 2 versions", "IE >= 11"]
+        }
+      }
+    ]
+  ],
+  "plugins": [
+    ["module-resolver", { "root": ["src", "node_modules"] }],
+    [
+      "transform-runtime",
+      {
+        "polyfill": true,
+        "regenerator": true
+      }
+    ]
+  ]
+}

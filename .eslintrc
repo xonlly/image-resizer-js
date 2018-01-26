@@ -1,0 +1,43 @@
+{
+  "extends": ["airbnb", "prettier"],
+  "env": {
+    "browser": true,
+    "jest": true,
+    "node": true
+  },
+  "plugins": ["prettier"],
+  "rules": {
+    "valid-jsdoc": 2,
+    "no-undef": 2,
+    "id-length": 0,
+    "no-return-assign": 0,
+    "arrow-body-style": 0,
+    "no-multi-spaces": 0,
+    "func-names": 0,
+    "comma-dangle": 0,
+    "no-use-before-define": [2, "nofunc"],
+    "import/no-unresolved": 2,
+    "import/named": 2,
+    "import/default": 2,
+    "import/no-named-as-default": 0,
+    "import/no-named-as-default-member": 0,
+    "brace-style": 0,
+    "class-methods-use-this": 0,
+    "max-len": 0,
+    "no-multiple-empty-lines": 0,
+    "padded-blocks": 0
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "moduleDirectory": ["node_modules", "src"]
+      }
+    }
+  },
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread": true
+    }
+  }
+}
