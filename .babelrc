@@ -4,19 +4,14 @@
       "env",
       {
         "targets": {
-          "browsers": ["last 2 versions", "IE >= 11"]
+          "browsers": ["last 2 versions", "safari >= 7", "ie >= 11"]
         }
       }
     ]
   ],
-  "env": {
-    "webpack": {
-      "presets": [
-        ["env", { "targets": { "browsers": "> 1%" }, "modules": false }]
-      ]
-    }
-  },
   "plugins": [
+    "minify-dead-code-elimination",
+    "minify-guarded-expressions",
     ["module-resolver", { "root": ["src", "node_modules"] }],
     [
       "transform-runtime",

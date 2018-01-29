@@ -1,6 +1,6 @@
 {
   "name": "image-resizer-js",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "main": "dist/bundle.js",
   "repository": "git@github.com:xonlly/image-resizer-js.git",
   "author": "Marvin SANT <contact@devteck.eu>",
@@ -9,6 +9,8 @@
     "babel-cli": "^6.26.0",
     "babel-eslint": "^8.2.1",
     "babel-loader": "^7.1.2",
+    "babel-plugin-minify-dead-code-elimination": "^0.2.0",
+    "babel-plugin-minify-guarded-expressions": "^0.2.0",
     "babel-plugin-module-resolver": "^3.0.0",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-polyfill": "^6.26.0",

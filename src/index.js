@@ -1,4 +1,4 @@
-import originalInkjet from 'inkjet';
+import exif from './exif';
 
 const EXIF_TRANSFORMS = {
   1: { rotate: 0, flip: false },
@@ -11,10 +11,11 @@ const EXIF_TRANSFORMS = {
   8: { rotate: Math.PI * 1.5, flip: false },
 };
 
+// TODO: move this on exif.js
 const inkjet = {
   exif: buf =>
     new Promise((resolve, reject) =>
-      originalInkjet.exif(buf, (err, metadata) => {
+      exif(buf, (err, metadata) => {
         if (err) return reject(err);
         return resolve(metadata);
       }),

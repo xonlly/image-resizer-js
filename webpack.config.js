@@ -25,7 +25,7 @@ module.exports = {
   },
   module: {
     rules: [
-      {
+      !isProd && {
         test: /\.(png|jpg|jpeg|gif)$/,
         exclude: /node_modules/,
         use: [
@@ -36,7 +36,7 @@ module.exports = {
         ],
       },
       { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader' },
-    ],
+    ].filter(Boolean),
   },
   plugins: [
     !isProd && new webpack.HotModuleReplacementPlugin(),
@@ -44,7 +44,6 @@ module.exports = {
       new HtmlWebpackPlugin({
         inject: true,
         filename: 'index.html',
-        // chunks: ['index'],
         template: path.join(__dirname, 'demo/index.html'),
       }),
     // Minify JS

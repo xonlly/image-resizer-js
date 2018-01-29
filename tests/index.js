@@ -1,16 +1,4 @@
 import Resizer from '../src';
-import image from './assets/exif-orientation-examples/Landscape_2.jpg';
-
-const convertBinaryStringToUint8Array = bStr => {
-  const len = bStr.length;
-  const u8Array = new Uint8Array(len);
-
-  // eslint-disable-next-line
-  for (var i = 0; i < len; i++) {
-    u8Array[i] = bStr.charCodeAt(i);
-  }
-  return u8Array;
-};
 
 const [original, resized] = [new Image(), new Image()];
 
@@ -21,12 +9,11 @@ describe('test compression', () => {
 
     document.querySelector('body').appendChild(resized);
 
-    Promise.resolve()
-      .then(() => {
-        return convertBinaryStringToUint8Array(
-          atob(image.replace('data:', '').split(',')[1]),
-        );
-      })
+    fetch(
+      'https://raw.githubusercontent.com/recurser/exif-orientation-examples/master/Landscape_2.jpg',
+    )
+      .then(res => res.arrayBuffer())
+      .then(buffer => buffer)
       .then(uintArray => {
         originalBlob = new Blob([uintArray]);
         return Resizer(uintArray, 100);
