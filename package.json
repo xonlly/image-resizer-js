@@ -45,6 +45,6 @@
     "build": "webpack",
     "build:dev": "env NODE_ENV=prod webpack",
     "start:dev": "webpack-dev-server",
-    "test:karma": "karma"
+    "test": "karma"
   }
 }
