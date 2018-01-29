@@ -1,7 +1,7 @@
 {
   "name": "image-resizer-js",
-  "version": "1.0.1",
-  "main": "src/index.js",
+  "version": "1.0.2",
+  "main": "dist/bundle.js",
   "repository": "git@github.com:xonlly/image-resizer-js.git",
   "author": "Marvin SANT <contact@devteck.eu>",
   "license": "MIT",
