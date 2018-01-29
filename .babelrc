@@ -9,6 +9,13 @@
       }
     ]
   ],
+  "env": {
+    "webpack": {
+      "presets": [
+        ["env", { "targets": { "browsers": "> 1%" }, "modules": false }]
+      ]
+    }
+  },
   "plugins": [
     ["module-resolver", { "root": ["src", "node_modules"] }],
     [

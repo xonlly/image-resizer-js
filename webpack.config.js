@@ -19,7 +19,9 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
-    publicPath: `http://${HOST}:${PORT}/`,
+    libraryTarget: 'umd',
+    umdNamedDefine: true,
+    publicPath: isProd ? undefined : `http://${HOST}:${PORT}/`,
   },
   module: {
     rules: [
@@ -37,7 +39,7 @@ module.exports = {
     ],
   },
   plugins: [
-    new webpack.HotModuleReplacementPlugin(),
+    !isProd && new webpack.HotModuleReplacementPlugin(),
     !isProd &&
       new HtmlWebpackPlugin({
         inject: true,
