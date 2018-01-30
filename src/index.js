@@ -11,17 +11,6 @@ const EXIF_TRANSFORMS = {
   8: { rotate: Math.PI * 1.5, flip: false },
 };
 
-// TODO: move this on exif.js
-const inkjet = {
-  exif: buf =>
-    new Promise((resolve, reject) =>
-      exif(buf, (err, metadata) => {
-        if (err) return reject(err);
-        return resolve(metadata);
-      }),
-    ),
-};
-
 const transformCanvas = (ctx, degrees = 0, flip = false) => {
   ctx.translate(ctx.canvas.width / 2, ctx.canvas.height / 2);
   ctx.rotate(degrees);
@@ -53,9 +42,8 @@ const getCanvasForImage = (image, maxWidth, size) => {
   return canvas;
 };
 
-const createImage = binary =>
+const createImage = blob =>
   new Promise(resolve => {
-    const blob = new Blob([binary]);
     const image = new Image();
 
     image.src = URL.createObjectURL(blob);
@@ -63,14 +51,16 @@ const createImage = binary =>
   });
 
 const rotateAndResize = async (
-  inkjetImage,
+  arrayBuffer,
   exifOrientationId,
-  maxWidth = 800,
+  maxWidth,
+  quality,
 ) => {
-  if (!EXIF_TRANSFORMS[exifOrientationId]) return inkjetImage;
+  if (!EXIF_TRANSFORMS[exifOrientationId]) return arrayBuffer;
 
-  const image = await createImage(inkjetImage);
-  const canvas = getCanvasForImage(inkjetImage, maxWidth, {
+  const blob = new Blob([arrayBuffer]);
+  const image = await createImage(blob);
+  const canvas = getCanvasForImage(arrayBuffer, maxWidth || image.width, {
     width: image.width,
     height: image.height,
   });
@@ -89,21 +79,28 @@ const rotateAndResize = async (
   ctx.drawImage(image, 0, 0, image.width, image.height, -w / 2, -h / 2, w, h);
 
   if (typeof canvas.toBlob !== 'undefined') {
-    return new Promise(resolve => canvas.toBlob(resolve));
+    return new Promise(resolve =>
+      canvas.toBlob(resolve, blob.type, quality / 100),
+    );
   } else if (typeof canvas.msToBlob !== 'undefined') {
     return canvas.msToBlob();
   }
 
-  return inkjetImage;
+  return arrayBuffer;
 };
 
-const Lightening = async (binary, maxWidth = 800) => {
-  try {
-    const metadata = await inkjet.exif(binary);
-    let orientation = 1;
-    if (metadata.Orientation) orientation = metadata.Orientation.value;
+const Resizer = async (binary, maxWidth = undefined, quality = 100) => {
+  let orientation = 1;
 
-    return await rotateAndResize(binary, orientation, maxWidth);
+  try {
+    const metadata = await exif(binary);
+    if (metadata.Orientation) orientation = metadata.Orientation.value;
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('get metadata error', e);
+  }
+  try {
+    return await rotateAndResize(binary, orientation, maxWidth, quality);
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error('error', e);
@@ -111,4 +108,4 @@ const Lightening = async (binary, maxWidth = 800) => {
   }
 };
 
-export default Lightening;
+export default Resizer;
