@@ -2,8 +2,6 @@ const path = require('path');
 
 const CI = !!process.env.CI;
 
-console.log('is CI ?', CI);
-
 const webpackConfig = {
   devtool: 'inline-source-map',
   entry: ['babel-polyfill', './src/index.js'],
