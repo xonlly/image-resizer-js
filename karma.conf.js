@@ -1,5 +1,9 @@
 const path = require('path');
 
+const CI = !!process.env.CI;
+
+console.log('is CI ?', CI);
+
 const webpackConfig = {
   devtool: 'inline-source-map',
   entry: ['babel-polyfill', './src/index.js'],
@@ -29,7 +33,7 @@ module.exports = function(config) {
     basePath: '',
     frameworks: ['jasmine'],
     autoWatch: true,
-    browsers: ['Chrome', 'Firefox', 'Safari'],
+    browsers: CI ? ['Chrome'] : ['Chrome', 'Firefox', 'Safari'],
     files: [
       { pattern: 'tests/*.js', watched: true, served: true, included: true },
       {
