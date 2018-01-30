@@ -86,8 +86,17 @@ const rotateAndResize = async (
     return canvas.msToBlob();
   }
 
-  return arrayBuffer;
+  return blob;
 };
+
+const blobToArrayBuffer = blob =>
+  new Promise(resolve => {
+    const fileReader = new FileReader();
+    fileReader.onload = event => {
+      resolve(event.target.result);
+    };
+    fileReader.readAsArrayBuffer(blob);
+  });
 
 const Resizer = async (binary, maxWidth = undefined, quality = 100) => {
   let orientation = 1;
@@ -100,7 +109,9 @@ const Resizer = async (binary, maxWidth = undefined, quality = 100) => {
     console.error('get metadata error', e);
   }
   try {
-    return await rotateAndResize(binary, orientation, maxWidth, quality);
+    const blob = await rotateAndResize(binary, orientation, maxWidth, quality);
+    const arrayBuffer = await blobToArrayBuffer(blob);
+    return arrayBuffer;
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error('error', e);
