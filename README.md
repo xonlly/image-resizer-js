@@ -1,5 +1,8 @@
 [![wercker status](https://app.wercker.com/status/808b3e008fb779d94fcf557592655213/s/master 'wercker status')](https://app.wercker.com/project/byKey/808b3e008fb779d94fcf557592655213)
 
+[![NPM](https://nodei.co/npm/image-resizer-js.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/image-resizer-js/)
+[![NPM](https://nodei.co/npm-dl/image-resizer-js.png?months=1)](https://nodei.co/npm/image-resizer-js/)
+
 # Image resizer and fix exif rotate
 
 This module fix rotate and resize your image.
@@ -8,7 +11,7 @@ This module fix rotate and resize your image.
 import resizer from 'image-resizer-js';
 
 resizer(image<Uint8Array | ArrayBuffer>, width<Number>, quality<Number 0..100>)
-  .then(image<Uint8Array> => {
+  .then(image<ArrayBuffer> => {
     // image resized
     const blob = new Blob([image]);
 
@@ -18,6 +21,8 @@ resizer(image<Uint8Array | ArrayBuffer>, width<Number>, quality<Number 0..100>)
 ```
 
 # Exemple
+
+From a fetched image
 
 ```js
 import resizer from 'image-resizer-js';

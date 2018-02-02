@@ -115,6 +115,7 @@ const Resizer = async (binary, maxWidth = undefined, quality = 100) => {
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error('error', e);
+
     return binary;
   }
 };
