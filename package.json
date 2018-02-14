@@ -1,6 +1,6 @@
 {
   "name": "image-resizer-js",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "main": "dist/bundle.js",
   "repository": "git@github.com:xonlly/image-resizer-js.git",
   "author": "Marvin SANT <contact@devteck.eu>",
@@ -43,7 +43,7 @@
   "scripts": {
     "build": "webpack",
     "build:dev": "env NODE_ENV=prod webpack",
-    "start:dev": "webpack-dev-server",
+    "env NODE_ENV=development start:dev": "webpack-dev-server",
     "test": "karma start --single-run",
     "test:karma": "karma start"
   }

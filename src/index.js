@@ -105,8 +105,10 @@ const Resizer = async (binary, maxWidth = undefined, quality = 100) => {
     const metadata = await exif(binary);
     if (metadata.Orientation) orientation = metadata.Orientation.value;
   } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error('get metadata error', e);
+    if (e.message !== 'Invalid image format') {
+      // eslint-disable-next-line no-console
+      console.error('get metadata error', e);
+    }
   }
   try {
     const blob = await rotateAndResize(binary, orientation, maxWidth, quality);

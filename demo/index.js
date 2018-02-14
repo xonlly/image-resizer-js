@@ -10,31 +10,27 @@ var reader = new FileReader();
 
 reader.onload = e => {
   // const unit = new Uint8Array(reader.result);
-  console.log(
-    'e.target.result',
-    convertBinaryStringToUint8Array(e.target.result),
-  );
-  Resizer(convertBinaryStringToUint8Array(e.target.result), 10, 1000)
-    .then(x => console.log('x', x))
+  console.log('e.target.result', e.target.result);
+  Resizer(e.target.result, 200, 100)
+    .then(x => {
+      const blob = new Blob([x]);
+
+      const newImage = new Image();
+      newImage.src = URL.createObjectURL(blob);
+
+      console.log('v', blob);
+
+      preview.appendChild(newImage);
+    })
     .catch(err => console.log('error', err));
 };
 
-const convertBinaryStringToUint8Array = bStr => {
-  var i,
-    len = bStr.length,
-    u8_array = new Uint8Array(len);
-  for (var i = 0; i < len; i++) {
-    u8_array[i] = bStr.charCodeAt(i);
-  }
-  return u8_array;
-};
-
 const updateImageDisplay = () => {
-  var curFiles = input.files;
+  const curFiles = input.files;
 
   console.log('curFiles', curFiles);
   Object.keys(curFiles).forEach(file => {
-    reader.readAsBinaryString(curFiles[file]);
+    reader.readAsArrayBuffer(curFiles[file]);
   });
 
   console.log('cur', curFiles);
