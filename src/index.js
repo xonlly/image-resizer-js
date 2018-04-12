@@ -11,6 +11,8 @@ const EXIF_TRANSFORMS = {
   8: { rotate: Math.PI * 1.5, flip: false },
 };
 
+const ROTATE_DEGRESS = [0, 90, 180, 270];
+
 const transformCanvas = (ctx, degrees = 0, flip = false) => {
   ctx.translate(ctx.canvas.width / 2, ctx.canvas.height / 2);
   ctx.rotate(degrees);
@@ -55,11 +57,13 @@ const rotateAndResize = async (
   exifOrientationId,
   maxWidth,
   quality,
+  rotate = 0,
 ) => {
   if (!EXIF_TRANSFORMS[exifOrientationId]) return arrayBuffer;
 
   const blob = new Blob([arrayBuffer]);
   const image = await createImage(blob);
+
   const canvas = getCanvasForImage(arrayBuffer, maxWidth || image.width, {
     width: image.width,
     height: image.height,
@@ -68,7 +72,7 @@ const rotateAndResize = async (
   const w = canvas.width;
   const h = canvas.height;
 
-  if (exifOrientationId > 4) {
+  if (exifOrientationId > 4 || rotate === 90 || rotate === 270) {
     const temp = canvas.width;
     canvas.width = canvas.height;
     canvas.height = temp;
@@ -76,6 +80,7 @@ const rotateAndResize = async (
 
   const ctx = exifTransformCanvas(canvas.getContext('2d'), exifOrientationId);
 
+  ctx.rotate(rotate * Math.PI / 180);
   ctx.drawImage(image, 0, 0, image.width, image.height, -w / 2, -h / 2, w, h);
 
   if (typeof canvas.toBlob !== 'undefined') {
@@ -98,7 +103,7 @@ const blobToArrayBuffer = blob =>
     fileReader.readAsArrayBuffer(blob);
   });
 
-const Resizer = async (binary, maxWidth = undefined, quality = 100) => {
+const Resizer = async (binary, maxWidth = undefined, quality = 100, rotate) => {
   let orientation = 1;
 
   try {
@@ -111,7 +116,13 @@ const Resizer = async (binary, maxWidth = undefined, quality = 100) => {
     }
   }
   try {
-    const blob = await rotateAndResize(binary, orientation, maxWidth, quality);
+    const blob = await rotateAndResize(
+      binary,
+      orientation,
+      maxWidth,
+      quality,
+      ROTATE_DEGRESS[rotate],
+    );
     const arrayBuffer = await blobToArrayBuffer(blob);
     return arrayBuffer;
   } catch (e) {

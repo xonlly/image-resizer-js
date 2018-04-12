@@ -10,7 +10,7 @@ This module fix rotate and resize your image.
 ```js
 import resizer from 'image-resizer-js';
 
-resizer(image<Uint8Array | ArrayBuffer>, width<Number>, quality<Number 0..100>)
+resizer(image<Uint8Array | ArrayBuffer>, width<Number>, quality<Number 0..100>, rotate<Number 0..3>)
   .then(image<ArrayBuffer> => {
     // image resized
     const blob = new Blob([image]);

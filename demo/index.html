@@ -11,6 +11,12 @@
 <body>
   <form method="post" enctype="multipart/form-data">
     <div>
+      <select id="rotate">
+        <option value="0">0°</option>
+        <option value="1">90°</option>
+        <option value="2">180°</option>
+        <option value="3">270°</option>
+      </select>
       <label for="image_uploads">Choose images to upload (PNG, JPG)</label>
       <input type="file" id="image_uploads" name="image_uploads" accept=".jpg, .jpeg, .png" multiple>
     </div>
