@@ -52,4 +52,27 @@ describe('test compression', () => {
       done();
     }, 100);
   });
+
+  it('should resize by height', () => {
+    let originalBlob;
+    let resizedBlob;
+    fetch(
+      'https://raw.githubusercontent.com/recurser/exif-orientation-examples/master/Landscape_2.jpg',
+    )
+      .then(res => res.arrayBuffer())
+      .then(buffer => buffer)
+      .then(arrayBuffer => {
+        originalBlob = new Blob([arrayBuffer]);
+        return Resizer(arrayBuffer, { maxHeight: 50, quality: 50 });
+      })
+      .then(arrayBuffer => {
+        const blob = new Blob([arrayBuffer]);
+        resizedBlob = blob;
+      })
+
+      .then(() => {
+        resized.src = URL.createObjectURL(resizedBlob);
+        expect(resized.height).toBe(50)
+      })
+  })
 });

@@ -11,7 +11,7 @@ const EXIF_TRANSFORMS = {
   8: { rotate: Math.PI * 1.5, flip: false },
 };
 
-const ROTATE_DEGRESS = [0, 90, 180, 270];
+const ROTATE_DEGREES = [0, 90, 180, 270];
 
 const transformCanvas = (ctx, degrees = 0, flip = false) => {
   ctx.translate(ctx.canvas.width / 2, ctx.canvas.height / 2);
@@ -28,19 +28,10 @@ const exifTransformCanvas = (ctx, orientation) => {
   return ctx;
 };
 
-const getCanvasForImage = (image, maxWidth, size) => {
+const getCanvasForImage = (width, height) => {
   const canvas = document.createElement('canvas');
-  let w = size.width;
-  let h = size.height;
-
-  if (maxWidth && w > maxWidth) {
-    const ratio = w / h;
-    w = maxWidth;
-    h = w / ratio;
-  }
-
-  canvas.width = w;
-  canvas.height = h;
+  canvas.width = width;
+  canvas.height = height;
   return canvas;
 };
 
@@ -55,24 +46,35 @@ const createImage = blob =>
 const rotateAndResize = async (
   arrayBuffer,
   exifOrientationId,
-  maxWidth,
-  quality,
-  rotate = 0,
+  options,
 ) => {
   if (!EXIF_TRANSFORMS[exifOrientationId]) return arrayBuffer;
 
   const blob = new Blob([arrayBuffer]);
   const image = await createImage(blob);
 
-  const canvas = getCanvasForImage(arrayBuffer, maxWidth || image.width, {
-    width: image.width,
-    height: image.height,
-  });
+  let finalWidth = image.width
+  let finalHeight = image.height
+  if (options.maxWidth && finalWidth > options.maxWidth) {
+    const ratio = options.maxWidth / finalWidth
+    finalWidth *= ratio
+    finalHeight *= ratio
+  }
+  if (options.maxHeight && finalHeight > options.maxHeight) {
+    const ratio = options.maxHeight / finalHeight
+    finalWidth *= ratio
+    finalHeight *= ratio
+  }
+
+  finalWidth = Math.floor(finalWidth)
+  finalHeight = Math.floor(finalHeight)
+
+  const canvas = getCanvasForImage(finalWidth, finalHeight);
 
   const w = canvas.width;
   const h = canvas.height;
 
-  if (exifOrientationId > 4 || rotate === 90 || rotate === 270) {
+  if (exifOrientationId > 4 || options.rotate === 90 || options.rotate === 270) {
     const temp = canvas.width;
     canvas.width = canvas.height;
     canvas.height = temp;
@@ -80,12 +82,12 @@ const rotateAndResize = async (
 
   const ctx = exifTransformCanvas(canvas.getContext('2d'), exifOrientationId);
 
-  ctx.rotate(rotate * Math.PI / 180);
+  ctx.rotate(options.rotate * Math.PI / 180);
   ctx.drawImage(image, 0, 0, image.width, image.height, -w / 2, -h / 2, w, h);
 
   if (typeof canvas.toBlob !== 'undefined') {
     return new Promise(resolve =>
-      canvas.toBlob(resolve, blob.type, quality / 100),
+      canvas.toBlob(resolve, options.type || blob.type, options.quality / 100),
     );
   } else if (typeof canvas.msToBlob !== 'undefined') {
     return canvas.msToBlob();
@@ -103,7 +105,19 @@ const blobToArrayBuffer = blob =>
     fileReader.readAsArrayBuffer(blob);
   });
 
-const Resizer = async (binary, maxWidth = undefined, quality = 100, rotate) => {
+const Resizer = async (binary, maxWidthOrOptions = undefined, quality = 100, rotate) => {
+  let options
+  if (typeof maxWidthOrOptions === 'object') {
+    options = maxWidthOrOptions
+    if (!options.quality) options.quality = 100
+    options.rotate = ROTATE_DEGREES[options.rotate]
+  } else {
+    options = {}
+    options.maxWidth = maxWidthOrOptions
+    options.quality = quality
+    options.rotate = ROTATE_DEGREES[rotate]
+  }
+
   let orientation = 1;
 
   try {
@@ -119,9 +133,7 @@ const Resizer = async (binary, maxWidth = undefined, quality = 100, rotate) => {
     const blob = await rotateAndResize(
       binary,
       orientation,
-      maxWidth,
-      quality,
-      ROTATE_DEGRESS[rotate],
+      options,
     );
     const arrayBuffer = await blobToArrayBuffer(blob);
     return arrayBuffer;

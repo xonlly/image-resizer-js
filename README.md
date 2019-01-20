@@ -10,7 +10,7 @@ This module fix rotate and resize your image.
 ```js
 import resizer from 'image-resizer-js';
 
-resizer(image<Uint8Array | ArrayBuffer>, width<Number>, quality<Number 0..100>, rotate<Number 0..3>)
+resizer(image<Uint8Array | ArrayBuffer>, maxWidth<Number>, quality<Number 0..100>, rotate<Number 0..3>)
   .then(image<ArrayBuffer> => {
     // image resized
     const blob = new Blob([image]);
@@ -20,7 +20,33 @@ resizer(image<Uint8Array | ArrayBuffer>, width<Number>, quality<Number 0..100>, 
   .catch(err => console.error(err))
 ```
 
-# Exemple
+Or with more options...
+
+```js
+import resizer from 'image-resizer-js';
+
+const options = {
+  maxWidth: <Number | undefined>,
+  maxHeight: <Number | undefined>,
+  quality: <Number 0..100 | undefined>,
+  rotate: <Number 0..3 | undefined>,
+  type: <String>
+}
+
+resizer(image<Uint8Array | ArrayBuffer>, options)
+  .then(image<ArrayBuffer> => {
+    // image resized
+    const blob = new Blob([image]);
+
+    image.src = blob;
+  })
+  .catch(err => console.error(err))
+```
+
+Where the `options.type` is the mime type of the resulting image. The mime type defaults to `image/png` so you
+may want to specify `images/jpeg`.
+
+# Example
 
 From a fetched image
 
