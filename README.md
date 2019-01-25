@@ -30,7 +30,8 @@ const options = {
   maxHeight: <Number | undefined>,
   quality: <Number 0..100 | undefined>,
   rotate: <Number 0..3 | undefined>,
-  type: <String>
+  type: <String>,
+  silent: <Boolean>
 }
 
 resizer(image<Uint8Array | ArrayBuffer>, options)
@@ -42,6 +43,8 @@ resizer(image<Uint8Array | ArrayBuffer>, options)
   })
   .catch(err => console.error(err))
 ```
+
+Where the `options.silent` is active, no logs is return if you have an error or other.
 
 Where the `options.type` is the mime type of the resulting image. The mime type defaults to `image/png` so you
 may want to specify `images/jpeg`.

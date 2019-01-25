@@ -105,7 +105,7 @@ const blobToArrayBuffer = blob =>
     fileReader.readAsArrayBuffer(blob);
   });
 
-const Resizer = async (binary, maxWidthOrOptions = undefined, quality = 100, rotate) => {
+const Resizer = async (binary, maxWidthOrOptions = undefined, quality = 100, rotate = 0) => {
   let options
   if (typeof maxWidthOrOptions === 'object') {
     options = maxWidthOrOptions
@@ -124,7 +124,7 @@ const Resizer = async (binary, maxWidthOrOptions = undefined, quality = 100, rot
     const metadata = await exif(binary);
     if (metadata.Orientation) orientation = metadata.Orientation.value;
   } catch (e) {
-    if (e.message !== 'Invalid image format') {
+    if (e.message !== 'Invalid image format' && !options.silent) {
       // eslint-disable-next-line no-console
       console.error('get metadata error', e);
     }
@@ -138,9 +138,11 @@ const Resizer = async (binary, maxWidthOrOptions = undefined, quality = 100, rot
     const arrayBuffer = await blobToArrayBuffer(blob);
     return arrayBuffer;
   } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error('error', e);
-
+    if (!options.silent) {
+      // eslint-disable-next-line no-console
+      console.error('error', e);
+    }
+    
     return binary;
   }
 };
